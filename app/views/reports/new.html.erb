@@ -1,0 +1,56 @@
+<!-- app/views/reports/new.html.erb -->
+<div class="report-form-container">
+  <h1 class="report-title">Generate Restock Report</h1>
+
+  <%= form_with url: reports_path(format: :xlsx), method: :post, html: { class: "report-form", data: { controller: "reports" } } do |f| %>
+    <div class="form-field">
+      <%= f.label :start_date, "Start Date", class: "form-label" %>
+      <%= f.date_field :start_date, required: true, class: "form-input" %>
+    </div>
+
+    <div class="form-field">
+      <%= f.label :end_date, "End Date", class: "form-label" %>
+      <%= f.date_field :end_date, required: true, class: "form-input" %>
+    </div>
+
+    <div class="form-field">
+      <%= f.label :origin_location_id, "Origin Location", class: "form-label" %>
+      <%= f.select :origin_location_id,
+                  options_for_select(@locations.map { |loc| [loc[:name], loc[:id]] }),
+                  { include_blank: "Select Origin Location" },
+                  { required: true, class: "form-select" } %>
+    </div>
+
+    <div class="form-field">
+      <%= f.label :destination_location_id, "Destination Location", class: "form-label" %>
+      <%= f.select :destination_location_id,
+                  options_for_select(@locations.map { |loc| [loc[:name], loc[:id]] }),
+                  { include_blank: "Select Destination Location" },
+                  { required: true, class: "form-select" } %>
+    </div>
+
+    <div class="form-field">
+      <%= f.label :tag, "Filter by Tag (optional)", class: "form-label" %>
+      <%= f.select :tag,
+                  options_for_select(@tags),
+                  { include_blank: "All Tags" },
+                  class: "form-select" %>
+    </div>
+
+    <div class="form-actions">
+    <%= f.submit "Generate Report", 
+          class: "submit-button", 
+          data: { 
+            action: "reports#generateReport",
+            reports_target: "submitButton" 
+          } %>
+      <div class="loading-spinner" data-reports-target="spinner"></div>
+    </div>
+  <% end %>
+
+  <% if flash[:error] %>
+    <div class="error-message">
+      <%= flash[:error] %>
+    </div>
+  <% end %>
+</div>
